@@ -15,9 +15,11 @@ let realmConfig = Realm.Configuration(
     }
 )
 
+/// A service class for managing Realm database operations related to Synchable entities.
 public class RealmService {
     private let realm: Realm
 
+    /// Initializes the `RealmService` by configuring and opening the Realm database.
     public init() {
         do {
             Realm.Configuration.defaultConfiguration = realmConfig
@@ -30,11 +32,18 @@ public class RealmService {
 
     // MARK: - TodoTask Methods
 
+    /// Fetches all objects of a Synchable type from the Realm database.
+    ///
+    /// - Returns: An array of objects of type `T` that conform to the `Synchable` protocol.
     public func getAllEntityObjects<T: Synchable>() -> [T] {
         return realm.objects(T.self)
             .toArray(ofType: T.self)
     }
 
+    /// Deletes all objects of a specified type from the Realm database.
+    ///
+    /// - Parameter type: The `Object` type to be deleted.
+    /// - Throws: An error if deletion fails.
     func deleteAllEntityObjects<T: Object>(ofType type: T.Type) throws {
         do {
             try realm.write {
@@ -46,12 +55,22 @@ public class RealmService {
         }
     }
 
+    /// Fetches objects that were updated after a specified date.
+    ///
+    /// - Parameter date: The date used to filter the objects.
+    /// - Returns: An array of `Synchable` objects updated after the given date.
     func getNewEntityObjects<T: Synchable>(date: Date) -> [T] {
         return realm.objects(T.self)
             .filter("lastUpdated > %@", date)
             .toArray(ofType: T.self)
     }
 
+    /// Saves a `Synchable` object to the Realm database.
+    ///
+    /// - Parameters:
+    ///   - entity: The entity to be saved.
+    ///   - realm: The Realm instance to use. If `nil`, the default Realm instance is used.
+    /// - Throws: An error if the save operation fails.
     public func saveEntityObject<T: Synchable>(_ entity: T, realm: Realm? = nil) throws {
         do {
             let realmToUse = if let realm { realm } else { self.realm }
@@ -70,6 +89,10 @@ public class RealmService {
         }
     }
 
+    /// Deletes a specific `Synchable` entity from the Realm database by marking it as deleted.
+    ///
+    /// - Parameter entity: The entity to be deleted.
+    /// - Throws: An error if the deletion fails.
     public func deleteEntityObject<T: Synchable>(_ entity: T) throws {
         do {
             try realm.write {
@@ -87,8 +110,14 @@ public class RealmService {
         }
     }
 
-    // MARK: - New methods
+    // MARK: - New Methods
 
+    /// Fetches IDs and update dates for all objects of a specified Synchable entity.
+    ///
+    /// - Parameters:
+    ///   - entityType: The entity type to fetch metadata for.
+    ///   - realm: The Realm instance to use. If `nil`, the default Realm instance is used.
+    /// - Returns: An array of `Metadata` objects containing IDs, last updated timestamps, and deleted statuses.
     func getIdsAndUpdateDates<S: Synchable>(entityType: S.Type, realm: Realm? = nil) -> [Metadata] {
         Logger.shared.log.debug("Current thread: \(Thread.current)")
         let realmToUse = if let realm { realm } else { self.realm }
@@ -99,6 +128,13 @@ public class RealmService {
                                          deleted: $0.deleted) }
     }
 
+    /// Fetches objects that have been updated or are new based on their metadata.
+    ///
+    /// - Parameters:
+    ///   - objectsMetadata: The metadata for the objects to compare.
+    ///   - entityType: The entity type to fetch objects for.
+    ///   - realm: The Realm instance to use. If `nil`, the default Realm instance is used.
+    /// - Returns: An array of objects that are either updated or new.
     func getUpdatedAndNewEntities<T: Synchable>(
         objectsMetadata: [Metadata], entityType: T.Type, realm: Realm? = nil
     ) -> [T] {
@@ -128,6 +164,12 @@ public class RealmService {
         return entitiesToSync
     }
 
+    /// Sets the update date for a specific object to the current date.
+    ///
+    /// - Parameters:
+    ///   - object: The object for which the update date is to be set.
+    ///   - realm: The Realm instance to use. If `nil`, the default Realm instance is used.
+    /// - Throws: An error if the update operation fails.
     func setNewUpdateDate<T: Synchable>(object: T, realm: Realm? = nil) throws {
         let realmToUse = if let realm { realm } else { self.realm }
 
@@ -136,8 +178,14 @@ public class RealmService {
         }
     }
 
-    // MARK: - Background Stuff
+    // MARK: - Background Methods
 
+    /// Deletes feed entries based on a predicate, with an optional cancellation check.
+    ///
+    /// - Parameters:
+    ///   - entity: The entity type to delete entries for.
+    ///   - predicate: The predicate to filter entries by.
+    ///   - cancelCheck: A closure that returns a boolean indicating if the operation should be cancelled.
     func deleteFeedEntries1<T: Synchable>(entity: T.Type,
                                           predicate: NSPredicate?,
                                           cancelCheck: @escaping () -> Bool)
@@ -167,6 +215,13 @@ public class RealmService {
         }
     }
 
+    /// Deletes feed entries based on a predicate and an optional maximum entry limit, with an optional cancellation check.
+    ///
+    /// - Parameters:
+    ///   - entity: The entity type to delete entries for.
+    ///   - predicate: The predicate to filter entries by.
+    ///   - maxEntries: The maximum number of entries to retain.
+    ///   - cancelCheck: A closure that returns a boolean indicating if the operation should be cancelled.
     func deleteFeedEntries<T: Synchable>(
         entity: T.Type,
         predicate: NSPredicate?, // change to date, move predicate inside
