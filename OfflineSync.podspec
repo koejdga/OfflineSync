@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "OfflineSync"
-  spec.version      = "0.0.1"
+  spec.version      = "0.0.2"
   spec.summary      = "OfflineSync manages data synchronization between local storage and a remote database"
 
   # This description is used to generate tags and improve search results.
