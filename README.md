@@ -3,13 +3,28 @@
 ### How to install:
 
 
-### What this Swift package can:
 
--
--
--
+### Features of the package
 
+The **OfflineSync** package provides robust functionality for managing and synchronizing data seamlessly in applications. Key features include:
 
+- **Background Synchronization**:  
+  Enables data synchronization even when the application is not active, ensuring data remains up-to-date without user intervention
+
+- **Flexible Syncing Options**:  
+  Provides the ability to synchronize data:
+  - At specified intervals
+  - On-demand, triggered programmatically
+
+- **Customizable Data Retention**:  
+  Allows fine-tuned control over data storage, including:
+  - Setting a maximum amount for retained data
+  - Configuring automatic deletion of outdated data based on a specified time threshold
+
+- **Network Availability Checks**:  
+  Continuously monitors network status
+
+This package is ideal for applications requiring offline-first capabilities, efficient background operations, and dynamic data management strategies
 
 ### How to use:
 
