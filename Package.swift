@@ -28,4 +28,5 @@ let package = Package(
                 .product(name: "SwiftyBeaver", package: "SwiftyBeaver"),
                 .product(name: "RealmSwift", package: "realm-swift"),
             ]),
-    ])
+    ],
+    swiftLanguageVersions: [SwiftLanguageMode.v5])
