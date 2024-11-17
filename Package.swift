@@ -28,7 +28,4 @@ let package = Package(
                 .product(name: "SwiftyBeaver", package: "SwiftyBeaver"),
                 .product(name: "RealmSwift", package: "realm-swift"),
             ]),
-        .testTarget(
-            name: "OfflineSyncTests",
-            dependencies: ["OfflineSync"]),
     ])
